@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maiquan.aladdin.mapper.OrderProductMapper" >
+  <resultMap id="BaseResultMap" type="com.maiquan.aladdin.domain.OrderProduct" >
+    <id column="ID" property="ID" jdbcType="INTEGER" />
+    <result column="orderID" property="orderID" jdbcType="VARCHAR" />
+    <result column="product" property="product" jdbcType="INTEGER" />
+    <result column="productName" property="productName" jdbcType="VARCHAR" />
+    <result column="supName" property="supName" jdbcType="VARCHAR" />
+    <result column="skuID" property="skuID" jdbcType="INTEGER" />
+    <result column="skuName" property="skuName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, orderID, product, productName, supName, skuID, skuName
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_order_product
+    where ID = #{ID,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_order_product
+    where ID = #{ID,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.maiquan.aladdin.domain.OrderProduct" >
+    insert into t_order_product (ID, orderID, product, 
+      productName, supName, skuID, 
+      skuName)
+    values (#{ID,jdbcType=INTEGER}, #{orderID,jdbcType=VARCHAR}, #{product,jdbcType=INTEGER}, 
+      #{productName,jdbcType=VARCHAR}, #{supName,jdbcType=VARCHAR}, #{skuID,jdbcType=INTEGER}, 
+      #{skuName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.maiquan.aladdin.domain.OrderProduct" >
+    insert into t_order_product
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ID != null" >
+        ID,
+      </if>
+      <if test="orderID != null" >
+        orderID,
+      </if>
+      <if test="product != null" >
+        product,
+      </if>
+      <if test="productName != null" >
+        productName,
+      </if>
+      <if test="supName != null" >
+        supName,
+      </if>
+      <if test="skuID != null" >
+        skuID,
+      </if>
+      <if test="skuName != null" >
+        skuName,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ID != null" >
+        #{ID,jdbcType=INTEGER},
+      </if>
+      <if test="orderID != null" >
+        #{orderID,jdbcType=VARCHAR},
+      </if>
+      <if test="product != null" >
+        #{product,jdbcType=INTEGER},
+      </if>
+      <if test="productName != null" >
+        #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="supName != null" >
+        #{supName,jdbcType=VARCHAR},
+      </if>
+      <if test="skuID != null" >
+        #{skuID,jdbcType=INTEGER},
+      </if>
+      <if test="skuName != null" >
+        #{skuName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.maiquan.aladdin.domain.OrderProduct" >
+    update t_order_product
+    <set >
+      <if test="orderID != null" >
+        orderID = #{orderID,jdbcType=VARCHAR},
+      </if>
+      <if test="product != null" >
+        product = #{product,jdbcType=INTEGER},
+      </if>
+      <if test="productName != null" >
+        productName = #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="supName != null" >
+        supName = #{supName,jdbcType=VARCHAR},
+      </if>
+      <if test="skuID != null" >
+        skuID = #{skuID,jdbcType=INTEGER},
+      </if>
+      <if test="skuName != null" >
+        skuName = #{skuName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{ID,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.maiquan.aladdin.domain.OrderProduct" >
+    update t_order_product
+    set orderID = #{orderID,jdbcType=VARCHAR},
+      product = #{product,jdbcType=INTEGER},
+      productName = #{productName,jdbcType=VARCHAR},
+      supName = #{supName,jdbcType=VARCHAR},
+      skuID = #{skuID,jdbcType=INTEGER},
+      skuName = #{skuName,jdbcType=VARCHAR}
+    where ID = #{ID,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.maiquan.aladdin.domain.OrderProduct">
+  	select 
+  	<include refid="Base_Column_List"/>
+  	from t_order_product
+  	<where>
+  		
+  	</where>
+  </select>
+  
+</mapper>

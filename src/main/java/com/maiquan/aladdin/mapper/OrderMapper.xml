@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maiquan.aladdin.mapper.OrderMapper" >
+  <resultMap id="BaseResultMap" type="com.maiquan.aladdin.domain.Order" >
+    <id column="orderID" property="orderID" jdbcType="INTEGER" />
+    <result column="parentID" property="parentID" jdbcType="INTEGER" />
+    <result column="orderCode" property="orderCode" jdbcType="VARCHAR" />
+    <result column="orderStatus" property="orderStatus" jdbcType="VARCHAR" />
+    <result column="payChannel" property="payChannel" jdbcType="VARCHAR" />
+    <result column="payStatus" property="payStatus" jdbcType="VARCHAR" />
+    <result column="mqID" property="mqID" jdbcType="VARCHAR" />
+    <result column="invoiceName" property="invoiceName" jdbcType="VARCHAR" />
+    <result column="country" property="country" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="district" property="district" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="recName" property="recName" jdbcType="VARCHAR" />
+    <result column="recMobile" property="recMobile" jdbcType="VARCHAR" />
+    <result column="postFee" property="postFee" jdbcType="BIGINT" />
+    <result column="orderPrice" property="orderPrice" jdbcType="BIGINT" />
+    <result column="payPrice" property="payPrice" jdbcType="BIGINT" />
+    <result column="confirmTime" property="confirmTime" jdbcType="TIMESTAMP" />
+    <result column="payTime" property="payTime" jdbcType="TIMESTAMP" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    
+    <collection property="orderProducts" ofType="com.maiquan.aladdin.domain.OrderProduct" column="orderID" select="selectOrderProducts"/>
+    
+  </resultMap>
+  <sql id="Base_Column_List" >
+    orderID, parentID, orderCode, orderStatus, payChannel, payStatus, mqID, invoiceName, 
+    country, province, city, district, address, recName, recMobile, postFee, orderPrice, 
+    payPrice, confirmTime, payTime, createTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_order
+    where orderID = #{orderID,jdbcType=INTEGER}
+  </select>
+  <select id="selectOrderProducts" resultMap="com.maiquan.aladdin.mapper.Order.OrderProductMapper.BaseResultMap">
+	select 
+	<include refid="com.maiquan.aladdin.mapper.Order.OrderProductMapper.Base_Column_List"/>
+	where orderID=#{orderID,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_order
+    where orderID = #{orderID,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.maiquan.aladdin.domain.Order" >
+    insert into t_order (orderID, parentID, orderCode, 
+      orderStatus, payChannel, payStatus, 
+      mqID, invoiceName, country, 
+      province, city, district, 
+      address, recName, recMobile, 
+      postFee, orderPrice, payPrice, 
+      confirmTime, payTime, createTime
+      )
+    values (#{orderID,jdbcType=INTEGER}, #{parentID,jdbcType=INTEGER}, #{orderCode,jdbcType=VARCHAR}, 
+      #{orderStatus,jdbcType=VARCHAR}, #{payChannel,jdbcType=VARCHAR}, #{payStatus,jdbcType=VARCHAR}, 
+      #{mqID,jdbcType=VARCHAR}, #{invoiceName,jdbcType=VARCHAR}, #{country,jdbcType=VARCHAR}, 
+      #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{district,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{recName,jdbcType=VARCHAR}, #{recMobile,jdbcType=VARCHAR}, 
+      #{postFee,jdbcType=BIGINT}, #{orderPrice,jdbcType=BIGINT}, #{payPrice,jdbcType=BIGINT}, 
+      #{confirmTime,jdbcType=TIMESTAMP}, #{payTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.maiquan.aladdin.domain.Order" >
+    insert into t_order
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderID != null" >
+        orderID,
+      </if>
+      <if test="parentID != null" >
+        parentID,
+      </if>
+      <if test="orderCode != null" >
+        orderCode,
+      </if>
+      <if test="orderStatus != null" >
+        orderStatus,
+      </if>
+      <if test="payChannel != null" >
+        payChannel,
+      </if>
+      <if test="payStatus != null" >
+        payStatus,
+      </if>
+      <if test="mqID != null" >
+        mqID,
+      </if>
+      <if test="invoiceName != null" >
+        invoiceName,
+      </if>
+      <if test="country != null" >
+        country,
+      </if>
+      <if test="province != null" >
+        province,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="district != null" >
+        district,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="recName != null" >
+        recName,
+      </if>
+      <if test="recMobile != null" >
+        recMobile,
+      </if>
+      <if test="postFee != null" >
+        postFee,
+      </if>
+      <if test="orderPrice != null" >
+        orderPrice,
+      </if>
+      <if test="payPrice != null" >
+        payPrice,
+      </if>
+      <if test="confirmTime != null" >
+        confirmTime,
+      </if>
+      <if test="payTime != null" >
+        payTime,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderID != null" >
+        #{orderID,jdbcType=INTEGER},
+      </if>
+      <if test="parentID != null" >
+        #{parentID,jdbcType=INTEGER},
+      </if>
+      <if test="orderCode != null" >
+        #{orderCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null" >
+        #{orderStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="payChannel != null" >
+        #{payChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="payStatus != null" >
+        #{payStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="mqID != null" >
+        #{mqID,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceName != null" >
+        #{invoiceName,jdbcType=VARCHAR},
+      </if>
+      <if test="country != null" >
+        #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="district != null" >
+        #{district,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="recName != null" >
+        #{recName,jdbcType=VARCHAR},
+      </if>
+      <if test="recMobile != null" >
+        #{recMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="postFee != null" >
+        #{postFee,jdbcType=BIGINT},
+      </if>
+      <if test="orderPrice != null" >
+        #{orderPrice,jdbcType=BIGINT},
+      </if>
+      <if test="payPrice != null" >
+        #{payPrice,jdbcType=BIGINT},
+      </if>
+      <if test="confirmTime != null" >
+        #{confirmTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payTime != null" >
+        #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.maiquan.aladdin.domain.Order" >
+    update t_order
+    <set >
+      <if test="parentID != null" >
+        parentID = #{parentID,jdbcType=INTEGER},
+      </if>
+      <if test="orderCode != null" >
+        orderCode = #{orderCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null" >
+        orderStatus = #{orderStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="payChannel != null" >
+        payChannel = #{payChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="payStatus != null" >
+        payStatus = #{payStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="mqID != null" >
+        mqID = #{mqID,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceName != null" >
+        invoiceName = #{invoiceName,jdbcType=VARCHAR},
+      </if>
+      <if test="country != null" >
+        country = #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="district != null" >
+        district = #{district,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="recName != null" >
+        recName = #{recName,jdbcType=VARCHAR},
+      </if>
+      <if test="recMobile != null" >
+        recMobile = #{recMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="postFee != null" >
+        postFee = #{postFee,jdbcType=BIGINT},
+      </if>
+      <if test="orderPrice != null" >
+        orderPrice = #{orderPrice,jdbcType=BIGINT},
+      </if>
+      <if test="payPrice != null" >
+        payPrice = #{payPrice,jdbcType=BIGINT},
+      </if>
+      <if test="confirmTime != null" >
+        confirmTime = #{confirmTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payTime != null" >
+        payTime = #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where orderID = #{orderID,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.maiquan.aladdin.domain.Order" >
+    update t_order
+    set parentID = #{parentID,jdbcType=INTEGER},
+      orderCode = #{orderCode,jdbcType=VARCHAR},
+      orderStatus = #{orderStatus,jdbcType=VARCHAR},
+      payChannel = #{payChannel,jdbcType=VARCHAR},
+      payStatus = #{payStatus,jdbcType=VARCHAR},
+      mqID = #{mqID,jdbcType=VARCHAR},
+      invoiceName = #{invoiceName,jdbcType=VARCHAR},
+      country = #{country,jdbcType=VARCHAR},
+      province = #{province,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      district = #{district,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      recName = #{recName,jdbcType=VARCHAR},
+      recMobile = #{recMobile,jdbcType=VARCHAR},
+      postFee = #{postFee,jdbcType=BIGINT},
+      orderPrice = #{orderPrice,jdbcType=BIGINT},
+      payPrice = #{payPrice,jdbcType=BIGINT},
+      confirmTime = #{confirmTime,jdbcType=TIMESTAMP},
+      payTime = #{payTime,jdbcType=TIMESTAMP},
+      createTime = #{createTime,jdbcType=TIMESTAMP}
+    where orderID = #{orderID,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectByCondition" parameterType="com.maiquan.aladdin.domain.Order">
+  	select
+  	<include refid="Base_Column_List"/>
+  	from t_order
+  	<where>
+  	  <if test="parentID != null" >
+        AND parentID = #{parentID,jdbcType=INTEGER}
+      </if>
+      <if test="orderCode != null" >
+        AND orderCode = #{orderCode,jdbcType=VARCHAR}
+      </if>
+      <if test="orderStatus != null" >
+        AND orderStatus = #{orderStatus,jdbcType=VARCHAR}
+      </if>
+      <if test="payChannel != null" >
+        AND payChannel = #{payChannel,jdbcType=VARCHAR}
+      </if>
+      <if test="payStatus != null" >
+        AND payStatus = #{payStatus,jdbcType=VARCHAR}
+      </if>
+      <if test="mqID != null" >
+        AND mqID = #{mqID,jdbcType=VARCHAR}
+      </if>
+      <if test="invoiceName != null" >
+        AND invoiceName = #{invoiceName,jdbcType=VARCHAR}
+      </if>
+      <if test="country != null" >
+        AND country = #{country,jdbcType=VARCHAR}
+      </if>
+      <if test="province != null" >
+        AND province = #{province,jdbcType=VARCHAR}
+      </if>
+      <if test="city != null" >
+        AND city = #{city,jdbcType=VARCHAR}
+      </if>
+      <if test="district != null" >
+        AND district = #{district,jdbcType=VARCHAR}
+      </if>
+      <if test="address != null" >
+        AND address = #{address,jdbcType=VARCHAR}
+      </if>
+      <if test="recName != null" >
+        AND recName = #{recName,jdbcType=VARCHAR}
+      </if>
+      <if test="recMobile != null" >
+        AND recMobile = #{recMobile,jdbcType=VARCHAR}
+      </if>
+      <if test="postFee != null" >
+        AND postFee = #{postFee,jdbcType=BIGINT}
+      </if>
+      <if test="orderPrice != null" >
+        AND orderPrice = #{orderPrice,jdbcType=BIGINT}
+      </if>
+      <if test="payPrice != null" >
+        AND payPrice = #{payPrice,jdbcType=BIGINT}
+      </if>
+      <if test="confirmTime != null" >
+        AND confirmTime = #{confirmTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="payTime != null" >
+        AND payTime = #{payTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="createTime != null" >
+        AND createTime = #{createTime,jdbcType=TIMESTAMP}
+      </if>
+  	</where>
+  </select>
+</mapper>
