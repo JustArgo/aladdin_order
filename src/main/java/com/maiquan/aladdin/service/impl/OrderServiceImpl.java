@@ -77,10 +77,22 @@ public class OrderServiceImpl implements IOrderService{
 	}
 
 	@Override
-	public List<Order> getOrderByPayStatus(String status, String requestID) {
+	public List<Order> getOrderByOrderStatus(String orderStatus, String requestID){
 		
 		Order order = new Order();
-		order.setPayStatus(status);
+		order.setOrderStatus(orderStatus);
+		
+		List<Order> orders = orderMapper.selectByCondition(order);
+		
+		return orders;
+		
+	}
+	
+	@Override
+	public List<Order> getOrderByPayStatus(String payStatus, String requestID) {
+		
+		Order order = new Order();
+		order.setPayStatus(payStatus);
 		
 		List<Order> orders = orderMapper.selectByCondition(order);
 		

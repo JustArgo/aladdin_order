@@ -13,10 +13,10 @@
 	<dubbo:protocol name="dubbo" host="127.0.0.1" port="20881"/>
 	<dubbo:protocol name="rest" port="8086" server="tomcat" contextpath="alading" host="127.0.0.1"/>
 	
-	<dubbo:service interface="com.maiquan.aladdin.service.ICommentService" ref="commentService" protocol="dubbo"/>
-	<bean id="commentService" class="com.maiquan.aladdin.service.impl.CommentServiceImpl"/>
+	<dubbo:service interface="com.maiquan.aladdin.service.IOrderService" ref="orderService" protocol="dubbo"/>
+	<bean id="orderService" class="com.maiquan.aladdin.service.impl.OrderServiceImpl"/>
 	
-	<dubbo:service interface="com.maiquan.aladdin.service.ICommentRestService" ref="commentRestService" protocol="rest"/>
-	<bean id="commentRestService" class="com.maiquan.aladdin.service.impl.CommentRestServiceImpl"/>
+	<dubbo:service interface="com.maiquan.aladdin.service.IOrderProductService" ref="orderProductService" protocol="dubbo"/>
+	<bean id="orderProductService" class="com.maiquan.aladdin.service.impl.OrderProductServiceImpl"/>
 	
 </beans>

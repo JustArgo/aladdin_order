@@ -14,7 +14,15 @@ public class OrderProductServiceImpl implements IOrderProductService{
 	private OrderProductMapper orderProductMapper;
 	
 	@Override
-	public OrderProduct getOrderProductByID(Integer orderProductID) {
+	public int addOrderProduct(OrderProduct orderProduct, String requestID) {
+		
+		orderProductMapper.insert(orderProduct);
+		return 0;
+		
+	}
+
+	@Override
+	public OrderProduct getOrderProductByID(Integer orderProductID, String requestID) {
 		
 		OrderProduct orderProduct = orderProductMapper.selectByPrimaryKey(orderProductID);
 		
@@ -30,7 +38,7 @@ public class OrderProductServiceImpl implements IOrderProductService{
 	}
 
 	@Override
-	public int updateOrderProduct(OrderProduct orderProduct, Integer requetsID) {
+	public int updateOrderProduct(OrderProduct orderProduct, String requetsID) {
 		
 		orderProductMapper.updateByPrimaryKeySelective(orderProduct);
 		
@@ -40,22 +48,30 @@ public class OrderProductServiceImpl implements IOrderProductService{
 	@Override
 	public List<OrderProduct> getOrderProductsByOrderID(Integer orderID, String requestID) {
 		
-		
-		return null;
+		OrderProduct orderProduct = new OrderProduct();
+		orderProduct.setOrderID(orderID+"");
+		return orderProductMapper.selectByCondition(orderProduct);
+
 	}
 
 	@Override
 	public List<OrderProduct> getOrderProductsByProductName(String productName,
 			String requestID) {
-		// TODO Auto-generated method stub
-		return null;
+
+		OrderProduct orderProduct = new OrderProduct();
+		orderProduct.setProductName(productName);
+		return orderProductMapper.selectByCondition(orderProduct);
+		
 	}
 
 	@Override
 	public List<OrderProduct> getOrderProductsBySupName(String supName,
 			String requestID) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		OrderProduct orderProduct = new OrderProduct();
+		orderProduct.setSupName(supName);
+		return orderProductMapper.selectByCondition(orderProduct);
+
 	}
 
 	

@@ -62,13 +62,15 @@ public interface IOrderService {
 	 */
 	int divideOrder(Order order, String requestID);
 
+	List<Order> getOrderByOrderStatus(String orderStatus, String requestID);
+	
 	/**
 	 * 根据支付状态查找订单
 	 * @param status
 	 * @param requestID
 	 * @return
 	 */
-	List<Order> getOrderByPayStatus(String status, String requestID);
+	List<Order> getOrderByPayStatus(String payStatus, String requestID);
 	
 	/**
 	 * 根据支付渠道查找订单

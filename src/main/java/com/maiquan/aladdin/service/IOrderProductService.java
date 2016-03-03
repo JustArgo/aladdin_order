@@ -7,11 +7,19 @@ import com.maiquan.aladdin.domain.OrderProduct;
 public interface IOrderProductService {
 
 	/**
+	 * 新增订单商品对象
+	 * @param orderProduct
+	 * @param requestID
+	 * @return
+	 */
+	int addOrderProduct(OrderProduct orderProduct, String requestID);
+	
+	/**
 	 * 根据id查找订单商品 
 	 * @param orderProductID
 	 * @return
 	 */
-	OrderProduct getOrderProductByID(Integer orderProductID);
+	OrderProduct getOrderProductByID(Integer orderProductID, String requestID);
 
 	/**
 	 * 删除订单商品 
@@ -27,7 +35,7 @@ public interface IOrderProductService {
 	 * @param requetsID
 	 * @return
 	 */
-	int updateOrderProduct(OrderProduct orderProduct, Integer requetsID);
+	int updateOrderProduct(OrderProduct orderProduct, String requestID);
 	
 	/**
 	 * 根据orderID查找订单商品

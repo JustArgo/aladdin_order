@@ -38,9 +38,10 @@
     from t_order
     where orderID = #{orderID,jdbcType=INTEGER}
   </select>
-  <select id="selectOrderProducts" resultMap="com.maiquan.aladdin.mapper.Order.OrderProductMapper.BaseResultMap">
+  <select id="selectOrderProducts" resultMap="com.maiquan.aladdin.mapper.OrderProductMapper.BaseResultMap">
 	select 
-	<include refid="com.maiquan.aladdin.mapper.Order.OrderProductMapper.Base_Column_List"/>
+	<include refid="com.maiquan.aladdin.mapper.OrderProductMapper.Base_Column_List"/>
+	from t_order_product
 	where orderID=#{orderID,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
@@ -289,7 +290,7 @@
     where orderID = #{orderID,jdbcType=INTEGER}
   </update>
   
-  <select id="selectByCondition" parameterType="com.maiquan.aladdin.domain.Order">
+  <select id="selectByCondition" parameterType="com.maiquan.aladdin.domain.Order" resultMap="BaseResultMap">
   	select
   	<include refid="Base_Column_List"/>
   	from t_order
