@@ -1,4 +1,4 @@
-package com.maiquan.aladdin;
+package com.maiquan.aladdin_order;
 
 import java.util.Date;
 import java.util.List;
@@ -12,11 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.maiquan.aladdin.domain.Order;
-import com.maiquan.aladdin.service.IOrderService;
+import com.maiquan.aladdin_order.domain.Order;
+import com.maiquan.aladdin_order.service.IOrderService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:local/applicationContext.xml")
+@ContextConfiguration("classpath:applicationContext.xml")
 public class TestOrderService {
 	
 	@Autowired
@@ -26,7 +26,7 @@ public class TestOrderService {
 	 * 测试增加订单
 	 */
 	@Test
-	public void testAddOrder(){
+	public void testplaceOrder(){
 		
 		Order order = new Order();
 		order.setAddress("棠东");
@@ -37,13 +37,11 @@ public class TestOrderService {
 		order.setDistrict("广州");
 		order.setInvoiceName("麦圈");
 		order.setMqID("33");
+		//order.setID((int)(Math.random()*2147483648L));
 		order.setOrderCode(UUID.randomUUID().toString().replace("-", ""));
-		order.setOrderID(1);
-		order.setOrderPrice(1309L);
 		order.setOrderStatus("DEL");
 		order.setParentID(3);
-		order.setPayChannel(Order.PAY_CHANNEL_ALIPAY);
-		order.setPayPrice(1309L);
+		order.setpSum(33l);
 		order.setPayStatus("pay");
 		order.setPayTime(new Date());
 		order.setPostFee(99L);
@@ -51,9 +49,9 @@ public class TestOrderService {
 		order.setRecMobile("13456989856");
 		order.setRecName("jiangdong");
 		
-		//orderService.addOrder(order, UUID.randomUUID().toString());
+		orderService.placeOrder("mqsdfwerewr234234",new Integer[]{1,2,3},new Integer[]{1,1,1},new Long[]{115L,220L,30000L}, UUID.randomUUID().toString());
 		
-		Order retOrder = orderService.getOrderByID(order.getOrderID(), UUID.randomUUID().toString());
+		Order retOrder = orderService.getOrderByID(order.getID(), UUID.randomUUID().toString());
 		Assert.assertNotNull(retOrder);
 		
 	}
@@ -77,14 +75,14 @@ public class TestOrderService {
 	public void testUpdateOrder(){
 		
 		Order order = new Order();
-		order.setOrderID(1);
-		order.setOrderPrice(666L);
+		order.setID(1);
+		order.setOrderSum(666L);
 		
 		orderService.updateOrder(order, UUID.randomUUID().toString());
 		
 		Order retOrder = orderService.getOrderByID(1, UUID.randomUUID().toString());
 		
-		Assert.assertEquals(666, retOrder.getOrderPrice().intValue());
+		Assert.assertEquals(666, retOrder.getOrderSum().intValue());
 		
 	}
 	
@@ -115,7 +113,7 @@ public class TestOrderService {
 	@Test
 	public void testGetOrderByOrderStatus(){
 
-		List<Order> orders = orderService.getOrderByOrderStatus("DEL", UUID.randomUUID().toString());
+		List<Order> orders = orderService.getOrderByOrderStatus(null, "DEL", UUID.randomUUID().toString());
 		Assert.assertEquals(1, orders.size());
 		
 	}
@@ -127,7 +125,7 @@ public class TestOrderService {
 	@Test
 	public void testGetOrderByPayStatus(){
 		
-		List<Order> orders = orderService.getOrderByPayStatus("pay", UUID.randomUUID().toString());
+		List<Order> orders = orderService.getOrderByPayStatus(null, "pay", UUID.randomUUID().toString());
 		Assert.assertEquals(1, orders.size());
 		
 	}
@@ -137,9 +135,6 @@ public class TestOrderService {
 	 */
 	@Test
 	public void testGetOrderByPayChannel(){
-		
-		List<Order> orders = orderService.getOrderByPayChannel(Order.PAY_CHANNEL_ALIPAY, UUID.randomUUID().toString());
-		Assert.assertEquals(1, orders.size());
 		
 	}
 	

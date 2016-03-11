@@ -24,10 +24,43 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- 引用收货地址微服务 -->
 		<dependency>
 			<groupId>com.maiquan</groupId>
-			<artifactId>aladdin_comment</artifactId>
+			<artifactId>aladdin_receadd</artifactId>
 			<version>0.2.0-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	
+		<!-- 引用商品微服务 -->
+		<dependency>
+			<groupId>com.maiquan</groupId>
+			<artifactId>aladdin_product</artifactId>
+			<version>0.2.0-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<!-- 引用供应商微服务 -->
+		<dependency>
+			<groupId>com.maiquan</groupId>
+			<artifactId>aladdin_supplier</artifactId>
+			<version>0.2.0-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- druid -->
@@ -267,7 +300,7 @@
 				</includes>
 			</resource>
 			<resource>
-				<directory>src/main/resources/${config.dir}</directory>
+				<directory>src/main/resources/local</directory>
 				<includes>
 					<include>**/*.properties</include>
 					<include>**/*.xml</include>
@@ -287,26 +320,6 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-			<!-- 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy</id>
-						<phase>install</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>
-								${project.build.directory}/lib
-							</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			  -->
 			<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>

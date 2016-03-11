@@ -1,8 +1,8 @@
-package com.maiquan.aladdin.mapper;
+package com.maiquan.aladdin_order.mapper;
 
 import java.util.List;
 
-import com.maiquan.aladdin.domain.OrderProduct;
+import com.maiquan.aladdin_order.domain.OrderProduct;
 
 public interface OrderProductMapper {
     int deleteByPrimaryKey(Integer ID);
@@ -18,4 +18,5 @@ public interface OrderProductMapper {
     int updateByPrimaryKey(OrderProduct record);
     
     List<OrderProduct> selectByCondition(OrderProduct orderProduct);
+    
 }

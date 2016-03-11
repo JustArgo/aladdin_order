@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.maiquan.aladdin.mapper.OrderMapper" >
-  <resultMap id="BaseResultMap" type="com.maiquan.aladdin.domain.Order" >
-    <id column="orderID" property="orderID" jdbcType="INTEGER" />
+<mapper namespace="com.maiquan.aladdin_order.mapper.OrderMapper" >
+  <resultMap id="BaseResultMap" type="com.maiquan.aladdin_order.domain.Order" >
+    <id column="ID" property="ID" jdbcType="INTEGER" />
     <result column="parentID" property="parentID" jdbcType="INTEGER" />
+    <result column="parentCode" property="parentCode" jdbcType="VARCHAR" />
     <result column="orderCode" property="orderCode" jdbcType="VARCHAR" />
     <result column="orderStatus" property="orderStatus" jdbcType="VARCHAR" />
-    <result column="payChannel" property="payChannel" jdbcType="VARCHAR" />
     <result column="payStatus" property="payStatus" jdbcType="VARCHAR" />
+    <result column="logisticsNum" property="logisticsNum" jdbcType="VARCHAR" />
+    <result column="returnMoneyStatus" property="returnMoneyStatus" jdbcType="VARCHAR" />
+    <result column="returnGoodsStatus" property="returnGoodsStatus" jdbcType="VARCHAR" />
+    <result column="commentStatus" property="commentStatus" jdbcType="VARCHAR" />
+    <result column="shippingStatus" property="shippingStatus" jdbcType="VARCHAR" />
+    <result column="platform" property="platform" jdbcType="VARCHAR" />
     <result column="mqID" property="mqID" jdbcType="VARCHAR" />
     <result column="invoiceName" property="invoiceName" jdbcType="VARCHAR" />
     <result column="country" property="country" jdbcType="VARCHAR" />
@@ -17,63 +23,64 @@
     <result column="address" property="address" jdbcType="VARCHAR" />
     <result column="recName" property="recName" jdbcType="VARCHAR" />
     <result column="recMobile" property="recMobile" jdbcType="VARCHAR" />
+    <result column="pFee" property="pFee" jdbcType="BIGINT" />
     <result column="postFee" property="postFee" jdbcType="BIGINT" />
-    <result column="orderPrice" property="orderPrice" jdbcType="BIGINT" />
-    <result column="payPrice" property="payPrice" jdbcType="BIGINT" />
+    <result column="pSum" property="pSum" jdbcType="BIGINT" />
+    <result column="orderSum" property="orderSum" jdbcType="BIGINT" />
+    <result column="paySum" property="paySum" jdbcType="BIGINT" />
     <result column="confirmTime" property="confirmTime" jdbcType="TIMESTAMP" />
     <result column="payTime" property="payTime" jdbcType="TIMESTAMP" />
     <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
-    
-    <collection property="orderProducts" ofType="com.maiquan.aladdin.domain.OrderProduct" column="orderID" select="selectOrderProducts"/>
-    
   </resultMap>
   <sql id="Base_Column_List" >
-    orderID, parentID, orderCode, orderStatus, payChannel, payStatus, mqID, invoiceName, 
-    country, province, city, district, address, recName, recMobile, postFee, orderPrice, 
-    payPrice, confirmTime, payTime, createTime
+    ID, parentID, parentCode, orderCode, orderStatus, payStatus, logisticsNum, returnMoneyStatus, 
+    returnGoodsStatus, commentStatus, shippingStatus, platform, mqID, invoiceName, country, 
+    province, city, district, address, recName, recMobile, pFee, postFee, pSum, orderSum, 
+    paySum, confirmTime, payTime, createTime
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from t_order
-    where orderID = #{orderID,jdbcType=INTEGER}
-  </select>
-  <select id="selectOrderProducts" resultMap="com.maiquan.aladdin.mapper.OrderProductMapper.BaseResultMap">
-	select 
-	<include refid="com.maiquan.aladdin.mapper.OrderProductMapper.Base_Column_List"/>
-	from t_order_product
-	where orderID=#{orderID,jdbcType=INTEGER}
+    where ID = #{ID,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from t_order
-    where orderID = #{orderID,jdbcType=INTEGER}
+    where ID = #{ID,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.maiquan.aladdin.domain.Order" >
-    insert into t_order (orderID, parentID, orderCode, 
-      orderStatus, payChannel, payStatus, 
+  <insert id="insert" parameterType="com.maiquan.aladdin_order.domain.Order" useGeneratedKeys="true" keyProperty="ID" >
+    insert into t_order (ID, parentID, parentCode, 
+      orderCode, orderStatus, payStatus, 
+      logisticsNum, returnMoneyStatus, returnGoodsStatus, 
+      commentStatus, shippingStatus, platform, 
       mqID, invoiceName, country, 
       province, city, district, 
       address, recName, recMobile, 
-      postFee, orderPrice, payPrice, 
-      confirmTime, payTime, createTime
-      )
-    values (#{orderID,jdbcType=INTEGER}, #{parentID,jdbcType=INTEGER}, #{orderCode,jdbcType=VARCHAR}, 
-      #{orderStatus,jdbcType=VARCHAR}, #{payChannel,jdbcType=VARCHAR}, #{payStatus,jdbcType=VARCHAR}, 
+      pFee, postFee, pSum, orderSum, 
+      paySum, confirmTime, payTime, 
+      createTime)
+    values (#{ID,jdbcType=INTEGER}, #{parentID,jdbcType=INTEGER}, #{parentCode,jdbcType=VARCHAR}, 
+      #{orderCode,jdbcType=VARCHAR}, #{orderStatus,jdbcType=VARCHAR}, #{payStatus,jdbcType=VARCHAR}, 
+      #{logisticsNum,jdbcType=VARCHAR}, #{returnMoneyStatus,jdbcType=VARCHAR}, #{returnGoodsStatus,jdbcType=VARCHAR}, 
+      #{commentStatus,jdbcType=VARCHAR}, #{shippingStatus,jdbcType=VARCHAR}, #{platform,jdbcType=VARCHAR}, 
       #{mqID,jdbcType=VARCHAR}, #{invoiceName,jdbcType=VARCHAR}, #{country,jdbcType=VARCHAR}, 
       #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{district,jdbcType=VARCHAR}, 
       #{address,jdbcType=VARCHAR}, #{recName,jdbcType=VARCHAR}, #{recMobile,jdbcType=VARCHAR}, 
-      #{postFee,jdbcType=BIGINT}, #{orderPrice,jdbcType=BIGINT}, #{payPrice,jdbcType=BIGINT}, 
-      #{confirmTime,jdbcType=TIMESTAMP}, #{payTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}
-      )
+      #{pFee,jdbcType=BIGINT}, #{postFee,jdbcType=BIGINT}, #{pSum,jdbcType=BIGINT}, #{orderSum,jdbcType=BIGINT}, 
+      #{paySum,jdbcType=BIGINT}, #{confirmTime,jdbcType=TIMESTAMP}, #{payTime,jdbcType=TIMESTAMP}, 
+      #{createTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.maiquan.aladdin.domain.Order" >
+  <insert id="insertSelective" parameterType="com.maiquan.aladdin_order.domain.Order" useGeneratedKeys="true" keyProperty="ID" >
     insert into t_order
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="orderID != null" >
-        orderID,
+      <if test="ID != null" >
+        ID,
       </if>
       <if test="parentID != null" >
         parentID,
+      </if>
+      <if test="parentCode != null" >
+        parentCode,
       </if>
       <if test="orderCode != null" >
         orderCode,
@@ -81,11 +88,26 @@
       <if test="orderStatus != null" >
         orderStatus,
       </if>
-      <if test="payChannel != null" >
-        payChannel,
-      </if>
       <if test="payStatus != null" >
         payStatus,
+      </if>
+      <if test="logisticsNum != null" >
+        logisticsNum,
+      </if>
+      <if test="returnMoneyStatus != null" >
+        returnMoneyStatus,
+      </if>
+      <if test="returnGoodsStatus != null" >
+        returnGoodsStatus,
+      </if>
+      <if test="commentStatus != null" >
+        commentStatus,
+      </if>
+      <if test="shippingStatus != null" >
+        shippingStatus,
+      </if>
+      <if test="platform != null" >
+        platform,
       </if>
       <if test="mqID != null" >
         mqID,
@@ -114,14 +136,20 @@
       <if test="recMobile != null" >
         recMobile,
       </if>
+      <if test="pFee != null" >
+        pFee,
+      </if>
       <if test="postFee != null" >
         postFee,
       </if>
-      <if test="orderPrice != null" >
-        orderPrice,
+      <if test="pSum != null" >
+        pSum,
       </if>
-      <if test="payPrice != null" >
-        payPrice,
+      <if test="orderSum != null" >
+        orderSum,
+      </if>
+      <if test="paySum != null" >
+        paySum,
       </if>
       <if test="confirmTime != null" >
         confirmTime,
@@ -134,11 +162,14 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="orderID != null" >
-        #{orderID,jdbcType=INTEGER},
+      <if test="ID != null" >
+        #{ID,jdbcType=INTEGER},
       </if>
       <if test="parentID != null" >
         #{parentID,jdbcType=INTEGER},
+      </if>
+      <if test="parentCode != null" >
+        #{parentCode,jdbcType=VARCHAR},
       </if>
       <if test="orderCode != null" >
         #{orderCode,jdbcType=VARCHAR},
@@ -146,11 +177,26 @@
       <if test="orderStatus != null" >
         #{orderStatus,jdbcType=VARCHAR},
       </if>
-      <if test="payChannel != null" >
-        #{payChannel,jdbcType=VARCHAR},
-      </if>
       <if test="payStatus != null" >
         #{payStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="logisticsNum != null" >
+        #{logisticsNum,jdbcType=VARCHAR},
+      </if>
+      <if test="returnMoneyStatus != null" >
+        #{returnMoneyStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="returnGoodsStatus != null" >
+        #{returnGoodsStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="commentStatus != null" >
+        #{commentStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="shippingStatus != null" >
+        #{shippingStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="platform != null" >
+        #{platform,jdbcType=VARCHAR},
       </if>
       <if test="mqID != null" >
         #{mqID,jdbcType=VARCHAR},
@@ -179,14 +225,20 @@
       <if test="recMobile != null" >
         #{recMobile,jdbcType=VARCHAR},
       </if>
+      <if test="pFee != null" >
+        #{pFee,jdbcType=BIGINT},
+      </if>
       <if test="postFee != null" >
         #{postFee,jdbcType=BIGINT},
       </if>
-      <if test="orderPrice != null" >
-        #{orderPrice,jdbcType=BIGINT},
+      <if test="pSum != null" >
+        #{pSum,jdbcType=BIGINT},
       </if>
-      <if test="payPrice != null" >
-        #{payPrice,jdbcType=BIGINT},
+      <if test="orderSum != null" >
+        #{orderSum,jdbcType=BIGINT},
+      </if>
+      <if test="paySum != null" >
+        #{paySum,jdbcType=BIGINT},
       </if>
       <if test="confirmTime != null" >
         #{confirmTime,jdbcType=TIMESTAMP},
@@ -199,11 +251,14 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.maiquan.aladdin.domain.Order" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.maiquan.aladdin_order.domain.Order" >
     update t_order
     <set >
       <if test="parentID != null" >
         parentID = #{parentID,jdbcType=INTEGER},
+      </if>
+      <if test="parentCode != null" >
+        parentCode = #{parentCode,jdbcType=VARCHAR},
       </if>
       <if test="orderCode != null" >
         orderCode = #{orderCode,jdbcType=VARCHAR},
@@ -211,11 +266,26 @@
       <if test="orderStatus != null" >
         orderStatus = #{orderStatus,jdbcType=VARCHAR},
       </if>
-      <if test="payChannel != null" >
-        payChannel = #{payChannel,jdbcType=VARCHAR},
-      </if>
       <if test="payStatus != null" >
         payStatus = #{payStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="logisticsNum != null" >
+        logisticsNum = #{logisticsNum,jdbcType=VARCHAR},
+      </if>
+      <if test="returnMoneyStatus != null" >
+        returnMoneyStatus = #{returnMoneyStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="returnGoodsStatus != null" >
+        returnGoodsStatus = #{returnGoodsStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="commentStatus != null" >
+        commentStatus = #{commentStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="shippingStatus != null" >
+        shippingStatus = #{shippingStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="platform != null" >
+        platform = #{platform,jdbcType=VARCHAR},
       </if>
       <if test="mqID != null" >
         mqID = #{mqID,jdbcType=VARCHAR},
@@ -244,14 +314,20 @@
       <if test="recMobile != null" >
         recMobile = #{recMobile,jdbcType=VARCHAR},
       </if>
+      <if test="pFee != null" >
+        pFee = #{pFee,jdbcType=BIGINT},
+      </if>
       <if test="postFee != null" >
         postFee = #{postFee,jdbcType=BIGINT},
       </if>
-      <if test="orderPrice != null" >
-        orderPrice = #{orderPrice,jdbcType=BIGINT},
+      <if test="pSum != null" >
+        pSum = #{pSum,jdbcType=BIGINT},
       </if>
-      <if test="payPrice != null" >
-        payPrice = #{payPrice,jdbcType=BIGINT},
+      <if test="orderSum != null" >
+        orderSum = #{orderSum,jdbcType=BIGINT},
+      </if>
+      <if test="paySum != null" >
+        paySum = #{paySum,jdbcType=BIGINT},
       </if>
       <if test="confirmTime != null" >
         confirmTime = #{confirmTime,jdbcType=TIMESTAMP},
@@ -263,15 +339,21 @@
         createTime = #{createTime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where orderID = #{orderID,jdbcType=INTEGER}
+    where ID = #{ID,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.maiquan.aladdin.domain.Order" >
+  <update id="updateByPrimaryKey" parameterType="com.maiquan.aladdin_order.domain.Order"  >
     update t_order
     set parentID = #{parentID,jdbcType=INTEGER},
+      parentCode = #{parentCode,jdbcType=VARCHAR},
       orderCode = #{orderCode,jdbcType=VARCHAR},
       orderStatus = #{orderStatus,jdbcType=VARCHAR},
-      payChannel = #{payChannel,jdbcType=VARCHAR},
       payStatus = #{payStatus,jdbcType=VARCHAR},
+      logisticsNum = #{logisticsNum,jdbcType=VARCHAR},
+      returnMoneyStatus = #{returnMoneyStatus,jdbcType=VARCHAR},
+      returnGoodsStatus = #{returnGoodsStatus,jdbcType=VARCHAR},
+      commentStatus = #{commentStatus,jdbcType=VARCHAR},
+      shippingStatus = #{shippingStatus,jdbcType=VARCHAR},
+      platform = #{platform,jdbcType=VARCHAR},
       mqID = #{mqID,jdbcType=VARCHAR},
       invoiceName = #{invoiceName,jdbcType=VARCHAR},
       country = #{country,jdbcType=VARCHAR},
@@ -281,22 +363,26 @@
       address = #{address,jdbcType=VARCHAR},
       recName = #{recName,jdbcType=VARCHAR},
       recMobile = #{recMobile,jdbcType=VARCHAR},
+      pFee = #{pFee,jdbcType=BIGINT},
       postFee = #{postFee,jdbcType=BIGINT},
-      orderPrice = #{orderPrice,jdbcType=BIGINT},
-      payPrice = #{payPrice,jdbcType=BIGINT},
+      pSum = #{pSum,jdbcType=BIGINT},
+      orderSum = #{orderSum,jdbcType=BIGINT},
+      paySum = #{paySum,jdbcType=BIGINT},
       confirmTime = #{confirmTime,jdbcType=TIMESTAMP},
       payTime = #{payTime,jdbcType=TIMESTAMP},
       createTime = #{createTime,jdbcType=TIMESTAMP}
-    where orderID = #{orderID,jdbcType=INTEGER}
+    where ID = #{ID,jdbcType=INTEGER}
   </update>
-  
-  <select id="selectByCondition" parameterType="com.maiquan.aladdin.domain.Order" resultMap="BaseResultMap">
-  	select
+  <select id="selectByCondition" parameterType="Order" resultMap="BaseResultMap">
+  	select 
   	<include refid="Base_Column_List"/>
   	from t_order
   	<where>
   	  <if test="parentID != null" >
         AND parentID = #{parentID,jdbcType=INTEGER}
+      </if>
+      <if test="parentCode != null" >
+        AND parentCode = #{parentCode,jdbcType=VARCHAR}
       </if>
       <if test="orderCode != null" >
         AND orderCode = #{orderCode,jdbcType=VARCHAR}
@@ -304,11 +390,26 @@
       <if test="orderStatus != null" >
         AND orderStatus = #{orderStatus,jdbcType=VARCHAR}
       </if>
-      <if test="payChannel != null" >
-        AND payChannel = #{payChannel,jdbcType=VARCHAR}
-      </if>
       <if test="payStatus != null" >
         AND payStatus = #{payStatus,jdbcType=VARCHAR}
+      </if>
+      <if test="logisticsNum != null" >
+        AND logisticsNum = #{logisticsNum,jdbcType=VARCHAR}
+      </if>
+      <if test="returnMoneyStatus != null" >
+        AND returnMoneyStatus = #{returnMoneyStatus,jdbcType=VARCHAR}
+      </if>
+      <if test="returnGoodsStatus != null" >
+        AND returnGoodsStatus = #{returnGoodsStatus,jdbcType=VARCHAR}
+      </if>
+      <if test="commentStatus != null" >
+        AND commentStatus = #{commentStatus,jdbcType=VARCHAR}
+      </if>
+      <if test="shippingStatus != null" >
+        AND shippingStatus = #{shippingStatus,jdbcType=VARCHAR}
+      </if>
+      <if test="platform != null" >
+        AND platform = #{platform,jdbcType=VARCHAR}
       </if>
       <if test="mqID != null" >
         AND mqID = #{mqID,jdbcType=VARCHAR}
@@ -337,14 +438,20 @@
       <if test="recMobile != null" >
         AND recMobile = #{recMobile,jdbcType=VARCHAR}
       </if>
+      <if test="pFee != null" >
+        AND pFee = #{pFee,jdbcType=BIGINT}
+      </if>
       <if test="postFee != null" >
         AND postFee = #{postFee,jdbcType=BIGINT}
       </if>
-      <if test="orderPrice != null" >
-        AND orderPrice = #{orderPrice,jdbcType=BIGINT}
+      <if test="pSum != null" >
+        AND pSum = #{pSum,jdbcType=BIGINT}
       </if>
-      <if test="payPrice != null" >
-        AND payPrice = #{payPrice,jdbcType=BIGINT}
+      <if test="orderSum != null" >
+        AND orderSum = #{orderSum,jdbcType=BIGINT}
+      </if>
+      <if test="paySum != null" >
+        AND paySum = #{paySum,jdbcType=BIGINT}
       </if>
       <if test="confirmTime != null" >
         AND confirmTime = #{confirmTime,jdbcType=TIMESTAMP}
@@ -355,6 +462,6 @@
       <if test="createTime != null" >
         AND createTime = #{createTime,jdbcType=TIMESTAMP}
       </if>
-  	</where>
+  	</where>	
   </select>
 </mapper>

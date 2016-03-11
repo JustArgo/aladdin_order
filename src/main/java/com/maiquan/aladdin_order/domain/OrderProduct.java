@@ -1,22 +1,24 @@
-package com.maiquan.aladdin.domain;
+package com.maiquan.aladdin_order.domain;
 
 import java.io.Serializable;
 
 public class OrderProduct implements Serializable{
-	
-	private static final long serialVersionUID = -910026698410684439L;
+
+	private static final long serialVersionUID = -4376170385392828726L;
 
 	private Integer ID;
 
-    private String orderID;
+    private Integer orderID;
 
-    private Integer product;
+    private Integer productID;
 
     private String productName;
 
     private String supName;
 
     private Integer skuID;
+    
+    private Integer buyNum;
 
     private String skuName;
 
@@ -28,20 +30,20 @@ public class OrderProduct implements Serializable{
         this.ID = ID;
     }
 
-    public String getOrderID() {
+    public Integer getOrderID() {
         return orderID;
     }
 
-    public void setOrderID(String orderID) {
-        this.orderID = orderID == null ? null : orderID.trim();
+    public void setOrderID(Integer orderID) {
+        this.orderID = orderID;
     }
 
-    public Integer getProduct() {
-        return product;
+    public Integer getProductID() {
+        return productID;
     }
 
-    public void setProduct(Integer product) {
-        this.product = product;
+    public void setProductID(Integer productID) {
+        this.productID = productID;
     }
 
     public String getProductName() {
@@ -68,7 +70,15 @@ public class OrderProduct implements Serializable{
         this.skuID = skuID;
     }
 
-    public String getSkuName() {
+    public Integer getBuyNum() {
+		return buyNum;
+	}
+
+	public void setBuyNum(Integer buyNum) {
+		this.buyNum = buyNum;
+	}
+
+	public String getSkuName() {
         return skuName;
     }
 
@@ -78,9 +88,9 @@ public class OrderProduct implements Serializable{
 
 	@Override
 	public String toString() {
-		return "OrderProduct [ID=" + ID + ", orderID=" + orderID + ", product="
-				+ product + ", productName=" + productName + ", supName="
-				+ supName + ", skuID=" + skuID + ", skuName=" + skuName + "]";
+		return "OrderProduct [ID=" + ID + ", orderID=" + orderID
+				+ ", productID=" + productID + ", productName=" + productName
+				+ ", supName=" + supName + ", skuID=" + skuID + ", buyNum="
+				+ buyNum + ", skuName=" + skuName + "]";
 	}
-    
 }

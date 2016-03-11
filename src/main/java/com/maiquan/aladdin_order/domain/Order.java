@@ -1,32 +1,35 @@
-package com.maiquan.aladdin.domain;
+package com.maiquan.aladdin_order.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class Order implements Serializable{
 	
-	private static final long serialVersionUID = 5995521368154777239L;
+	private static final long serialVersionUID = 7578740373431553593L;
 
-	//支付宝支付
-	public static final String PAY_CHANNEL_ALIPAY     = "ALI"; 
-	//微信支付
-	public static final String PAY_CHANNEL_WECHATPAY  = "WXP";
-	//贝宝支付
-	public static final String PAY_CHANNEL_PAYPALPAY  = "PAY"; 
-	
-	private Integer orderID;
+	private Integer ID;
 
     private Integer parentID;
+
+    private String parentCode;
 
     private String orderCode;
 
     private String orderStatus;
 
-    private String payChannel;
-
     private String payStatus;
+
+    private String logisticsNum;
+
+    private String returnMoneyStatus;
+
+    private String returnGoodsStatus;
+
+    private String commentStatus;
+
+    private String shippingStatus;
+
+    private String platform;
 
     private String mqID;
 
@@ -46,11 +49,15 @@ public class Order implements Serializable{
 
     private String recMobile;
 
+    private Long pFee;
+
     private Long postFee;
 
-    private Long orderPrice;
+    private Long pSum;
 
-    private Long payPrice;
+    private Long orderSum;
+
+    private Long paySum;
 
     private Date confirmTime;
 
@@ -58,14 +65,12 @@ public class Order implements Serializable{
 
     private Date createTime;
 
-    private List<OrderProduct> orderProducts = new ArrayList<OrderProduct>();
-    
-    public Integer getOrderID() {
-        return orderID;
+    public Integer getID() {
+        return ID;
     }
 
-    public void setOrderID(Integer orderID) {
-        this.orderID = orderID;
+    public void setID(Integer ID) {
+        this.ID = ID;
     }
 
     public Integer getParentID() {
@@ -74,6 +79,14 @@ public class Order implements Serializable{
 
     public void setParentID(Integer parentID) {
         this.parentID = parentID;
+    }
+
+    public String getParentCode() {
+        return parentCode;
+    }
+
+    public void setParentCode(String parentCode) {
+        this.parentCode = parentCode == null ? null : parentCode.trim();
     }
 
     public String getOrderCode() {
@@ -92,20 +105,60 @@ public class Order implements Serializable{
         this.orderStatus = orderStatus == null ? null : orderStatus.trim();
     }
 
-    public String getPayChannel() {
-        return payChannel;
-    }
-
-    public void setPayChannel(String payChannel) {
-        this.payChannel = payChannel == null ? null : payChannel.trim();
-    }
-
     public String getPayStatus() {
         return payStatus;
     }
 
     public void setPayStatus(String payStatus) {
         this.payStatus = payStatus == null ? null : payStatus.trim();
+    }
+
+    public String getLogisticsNum() {
+        return logisticsNum;
+    }
+
+    public void setLogisticsNum(String logisticsNum) {
+        this.logisticsNum = logisticsNum == null ? null : logisticsNum.trim();
+    }
+
+    public String getReturnMoneyStatus() {
+        return returnMoneyStatus;
+    }
+
+    public void setReturnMoneyStatus(String returnMoneyStatus) {
+        this.returnMoneyStatus = returnMoneyStatus == null ? null : returnMoneyStatus.trim();
+    }
+
+    public String getReturnGoodsStatus() {
+        return returnGoodsStatus;
+    }
+
+    public void setReturnGoodsStatus(String returnGoodsStatus) {
+        this.returnGoodsStatus = returnGoodsStatus == null ? null : returnGoodsStatus.trim();
+    }
+
+    public String getCommentStatus() {
+        return commentStatus;
+    }
+
+    public void setCommentStatus(String commentStatus) {
+        this.commentStatus = commentStatus == null ? null : commentStatus.trim();
+    }
+
+    public String getShippingStatus() {
+        return shippingStatus;
+    }
+
+    public void setShippingStatus(String shippingStatus) {
+        this.shippingStatus = shippingStatus == null ? null : shippingStatus.trim();
+    }
+
+    public String getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(String platform) {
+        this.platform = platform == null ? null : platform.trim();
     }
 
     public String getMqID() {
@@ -180,6 +233,14 @@ public class Order implements Serializable{
         this.recMobile = recMobile == null ? null : recMobile.trim();
     }
 
+    public Long getpFee() {
+        return pFee;
+    }
+
+    public void setpFee(Long pFee) {
+        this.pFee = pFee;
+    }
+
     public Long getPostFee() {
         return postFee;
     }
@@ -188,20 +249,28 @@ public class Order implements Serializable{
         this.postFee = postFee;
     }
 
-    public Long getOrderPrice() {
-        return orderPrice;
+    public Long getpSum() {
+        return pSum;
     }
 
-    public void setOrderPrice(Long orderPrice) {
-        this.orderPrice = orderPrice;
+    public void setpSum(Long pSum) {
+        this.pSum = pSum;
     }
 
-    public Long getPayPrice() {
-        return payPrice;
+    public Long getOrderSum() {
+        return orderSum;
     }
 
-    public void setPayPrice(Long payPrice) {
-        this.payPrice = payPrice;
+    public void setOrderSum(Long orderSum) {
+        this.orderSum = orderSum;
+    }
+
+    public Long getPaySum() {
+        return paySum;
+    }
+
+    public void setPaySum(Long paySum) {
+        this.paySum = paySum;
     }
 
     public Date getConfirmTime() {
@@ -230,27 +299,19 @@ public class Order implements Serializable{
 
 	@Override
 	public String toString() {
-		return "Order [orderID=" + orderID + ", parentID=" + parentID
-				+ ", orderCode=" + orderCode + ", orderStatus=" + orderStatus
-				+ ", payChannel=" + payChannel + ", payStatus=" + payStatus
-				+ ", mqID=" + mqID + ", invoiceName=" + invoiceName
-				+ ", country=" + country + ", province=" + province + ", city="
-				+ city + ", district=" + district + ", address=" + address
-				+ ", recName=" + recName + ", recMobile=" + recMobile
-				+ ", postFee=" + postFee + ", orderPrice=" + orderPrice
-				+ ", payPrice=" + payPrice + ", confirmTime=" + confirmTime
-				+ ", payTime=" + payTime + ", createTime=" + createTime
-				+ ", orderProducts=" + orderProducts + "]";
+		return "Order [ID=" + ID + ", parentID=" + parentID + ", parentCode="
+				+ parentCode + ", orderCode=" + orderCode + ", orderStatus="
+				+ orderStatus + ", payStatus=" + payStatus + ", logisticsNum="
+				+ logisticsNum + ", returnMoneyStatus=" + returnMoneyStatus
+				+ ", returnGoodsStatus=" + returnGoodsStatus
+				+ ", commentStatus=" + commentStatus + ", shippingStatus="
+				+ shippingStatus + ", platform=" + platform + ", mqID=" + mqID
+				+ ", invoiceName=" + invoiceName + ", country=" + country
+				+ ", province=" + province + ", city=" + city + ", district="
+				+ district + ", address=" + address + ", recName=" + recName
+				+ ", recMobile=" + recMobile + ", pFee=" + pFee + ", postFee="
+				+ postFee + ", pSum=" + pSum + ", orderSum=" + orderSum
+				+ ", paySum=" + paySum + ", confirmTime=" + confirmTime
+				+ ", payTime=" + payTime + ", createTime=" + createTime + "]";
 	}
-
-	public List<OrderProduct> getOrderProducts() {
-		return orderProducts;
-	}
-
-	public void setOrderProducts(List<OrderProduct> orderProducts) {
-		this.orderProducts = orderProducts;
-	}
-    
-    
-    
 }
