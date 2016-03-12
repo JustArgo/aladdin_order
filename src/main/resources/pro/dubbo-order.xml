@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+				        http://www.springframework.org/schema/beans/spring-beans.xsd
+				        http://code.alibabatech.com/schema/dubbo
+				        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+	
+	<dubbo:application name="orderProvider"/>
+	<dubbo:registry  protocol="zookeeper" address="zookeeper://115.29.249.236:2181" timeout="30000"/>
+	
+	<dubbo:protocol name="dubbo" host="120.25.70.70" port="20884"/>
+
+	<dubbo:service interface="com.maiquan.aladdin_order.service.IOrderService" ref="orderService" protocol="dubbo"/>
+	<bean id="orderService" class="com.maiquan.aladdin_order.service.impl.OrderServiceImpl"/>
+	
+	<dubbo:service interface="com.maiquan.aladdin_order.service.IOrderProductService" ref="orderProductService"/>
+	<bean id="orderProductService" class="com.maiquan.aladdin_order.service.impl.OrderProductServiceImpl"/>
+	
+	<!-- 应用收货地址微服务 -->
+	<dubbo:reference id="manageReceAddService" interface="com.maiquan.aladdin_receadd.service.IManageReceAddService"/>
+	
+	<!-- 引用地区查询微服务 -->
+	<dubbo:reference id="addressService" interface="com.maiquan.aladdin_receadd.service.IAddressService"/>
+	
+	<!-- 引用商品微服务 -->
+	<dubbo:reference id="productService" interface="com.maiquan.aladdin_product.service.IProductService"/>
+	
+	<!-- 引用商品Sku微服务 -->
+	<dubbo:reference id="productSkuService" interface="com.maiquan.aladdin_product.service.IProductSkuService"/>
+	
+	<!-- 引用供应商微服务 -->
+	<dubbo:reference id="supplierService" interface="com.maiquan.aladdin_supplier.service.ISupplierService"/>
+	
+</beans>
