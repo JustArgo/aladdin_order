@@ -296,6 +296,10 @@ public class Order implements Serializable{
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
+    
+    public String getFullAddress(){
+    	return (this.province!=null?this.province:"")+(this.city!=null?this.city:"")+(this.district!=null?this.district:"")+(this.address!=null?this.address:"");
+    }
 
 	@Override
 	public String toString() {

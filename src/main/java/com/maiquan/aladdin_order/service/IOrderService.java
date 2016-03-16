@@ -80,4 +80,9 @@ public interface IOrderService {
 	 * 根据支付渠道查找订单
 	 */
 	List<Order> getOrderByPayChannel(String mqID, String channle, String requestID);
+	
+	/**
+	 * 为某个订单设置收货地址
+	 */
+	Order setReceAdd(String mqID, Order order, String requestID);
 }

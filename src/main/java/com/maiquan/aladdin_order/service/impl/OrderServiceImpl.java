@@ -19,6 +19,7 @@ import com.maiquan.aladdin_order.service.IOrderService;
 import com.maiquan.aladdin_order.util.LogUtil;
 import com.maiquan.aladdin_product.domain.Product;
 import com.maiquan.aladdin_product.domain.ProductSku;
+import com.maiquan.aladdin_product.service.IPostFeeService;
 import com.maiquan.aladdin_product.service.IProductService;
 import com.maiquan.aladdin_product.service.IProductSkuService;
 import com.maiquan.aladdin_receadd.domain.Address;
@@ -50,6 +51,9 @@ public class OrderServiceImpl implements IOrderService{
 	
 	@Autowired
 	private IAddressService addressService; 
+	
+	@Autowired
+	private IPostFeeService postFeeService;
 	
 	@Override
 	public Order getOrderByID(Integer orderID, String requestID) {
@@ -90,7 +94,7 @@ public class OrderServiceImpl implements IOrderService{
 			return 1;
 		}
 		
-		int parentOrderID = dealWithOrder1(mqID, skuIDs, buyNums, skuPrices, requestID);
+		int parentOrderID = dealWithOrder2(mqID, skuIDs, buyNums, skuPrices, requestID);
 		
 		LogUtil.logOutput("订单微服务", "placeOrder", requestID, parentOrderID);
 		
@@ -359,20 +363,27 @@ System.out.println(product.getSupplyID());
 				childOrder.setRecMobile(receiveAddress.getRecMobile());
 				childOrder.setAddress(receiveAddress.getAddress());
 				
+				Address country  = null;
 				Address province = null;
 				Address city 	 = null;
 				Address district = null;
 				
+				if(receiveAddress.getCountryID()!=null){
+					country = addressService.getAddress(receiveAddress.getCountryID(),UUID.randomUUID().toString());
+				}
 				if(receiveAddress.getProvinceID()!=null){
-					province = addressService.getAddress(Integer.valueOf(receiveAddress.getProvinceID()),UUID.randomUUID().toString());
+					province = addressService.getAddress(receiveAddress.getProvinceID(),UUID.randomUUID().toString());
 				}
 				if(receiveAddress.getCityID()!=null){
-					city = addressService.getAddress(Integer.valueOf(receiveAddress.getCityID()),UUID.randomUUID().toString());
+					city = addressService.getAddress(receiveAddress.getCityID(),UUID.randomUUID().toString());
 				}
 				if(receiveAddress.getDistrictID()!=null){
-					district = addressService.getAddress(Integer.valueOf(receiveAddress.getDistrictID()),UUID.randomUUID().toString());
+					district = addressService.getAddress(receiveAddress.getDistrictID(),UUID.randomUUID().toString());
 				}
 				
+				if(country!=null){
+					childOrder.setCountry(country.getName());
+				}
 				if(province!=null){
 					childOrder.setProvince(province.getName());
 				}
@@ -405,17 +416,17 @@ System.out.println(product.getSupplyID());
 		parentOrder.setpSum(totalPrice);
 		
 		// 插入parentOrder
-		orderMapper.insert(parentOrder);
+		orderMapper.insertSelective(parentOrder);
 		System.out.println("parentOrder的id：--"+parentOrder.getID());
 		
 		// 获得parentOrder的id 设置childOrder的id 并插入 然后再设置 orderProduct的orderID
 		for(int i=0;i<childOrders.size();i++){
 			Order childOrder = childOrders.get(i);
 			childOrder.setParentID(parentOrder.getID());
-			orderMapper.insert(childOrder);
+			orderMapper.insertSelective(childOrder);
 			
 			orderProducts.get(i).setOrderID(childOrder.getID());
-			orderProductMapper.insert(orderProducts.get(i));
+			orderProductMapper.insertSelective(orderProducts.get(i));
 			
 		}
 		
@@ -427,8 +438,10 @@ System.out.println(product.getSupplyID());
 		Order parentOrder = new Order();
 		List<Order> childOrders = new ArrayList<Order>();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmddSSS");
+		Long parentOrderPostFee = 0L;
 		//用于存放 相同供应商相同仓库的 订单商品对象
 		Map<String,List<OrderProduct>> supplyHouseMap = new HashMap<String,List<OrderProduct>>(); 
+		Map<String,List<OrderProduct>> orderCodeOrderProductsMap = new HashMap<String,List<OrderProduct>>();
 		
 		//用于 临时 存放 skuID和 skuPrice 的对应关系
 		Map<Integer,Long> skuPriceMap = new HashMap<Integer,Long>();
@@ -444,13 +457,9 @@ System.out.println(product.getSupplyID());
 		//parentOrder.setPlatform("");
 		parentOrder.setMqID(mqID);					//下单用户ID
 		//parentOrder.setInvoiceName("");			//发票抬头
-		parentOrder.setCountry("");
-		parentOrder.setProvince("");
-		parentOrder.setCity("");
-		parentOrder.setDistrict("");
-		parentOrder.setAddress("");
-		parentOrder.setRecName("");
-		parentOrder.setRecMobile("");
+		
+		//设置收货地址
+		parentOrder = this.setReceAdd(mqID, parentOrder, requestID);
 		parentOrder.setCreateTime(new Date());
 		
 		//总订单金额 
@@ -462,6 +471,9 @@ System.out.println(product.getSupplyID());
 			//订单总金额
 			totalPrice += skuPrices[i]*buyNums[i];
 			
+			//设置skuID和skuPrice的对应关系 供下面使用
+			skuPriceMap.put(skuIDs[i],skuPrices[i]);
+			
 			//找出sku 及其对应的商品 以及供应商
 			ProductSku sku = productSkuService.getSkuByID(skuIDs[i],UUID.randomUUID().toString());
 			Product product = productService.queryProduct(sku.getProductID(),UUID.randomUUID().toString());
@@ -472,10 +484,14 @@ System.out.println(product.getSupplyID());
 			orderProduct.setProductID(product.getID());
 			orderProduct.setProductName(product.getProductName());
 			orderProduct.setSkuID(skuIDs[i]);
+			orderProduct.setBuyNum(buyNums[i]);
 			orderProduct.setSkuName("");
 			orderProduct.setSupName(supplier.getName());
 //			orderProduct.setSkuName();
 			
+			//更新sku的库存
+			sku.setSkuStock(sku.getSkuStock()-buyNums[i]);
+			productSkuService.updateSku(sku, UUID.randomUUID().toString());
 			
 			if(supplyHouseMap.containsKey(product.getSupplyID()+":"+sku.getHouseID())){
 				supplyHouseMap.get(product.getSupplyID()+":"+sku.getHouseID()).add(orderProduct);
@@ -485,47 +501,19 @@ System.out.println(product.getSupplyID());
 				supplyHouseMap.put(product.getSupplyID()+":"+sku.getHouseID(), orderProducts);
 			}
 			
-			//针对第一种方案 即 一个OrderProduct对应一个childOrder
-			Order childOrder = new Order();
-			childOrder.setCountry("中国");
-			childOrder.setProvince("广东省");
-			childOrder.setCity("广州市");
-			childOrder.setDistrict("天河区");
-			childOrder.setAddress("棠下");
-			
-			//设置子订单的状态
-			childOrder.setCommentStatus("NOT");
-			childOrder.setReturnGoodsStatus("NOT");
-			childOrder.setReturnMoneyStatus("NOT");
-			childOrder.setPayStatus("NOT");
-			childOrder.setShippingStatus("NOT");
-			childOrder.setOrderStatus("COM");
-			
-			//设置收货相关
-			childOrder.setRecName("老谭");
-			childOrder.setRecMobile("234");
-			
-			childOrder.setPostFee(8L);
-			childOrder.setOrderSum(sku.getSkuPrice()*orderProduct.getBuyNum());
-			childOrder.setMqID(mqID);
-			childOrder.setInvoiceName("maiquan");
-			childOrder.setPlatform("APP");
-			childOrder.setCreateTime(new Date());
-			
 		}
 		
 		parentOrder.setpSum(totalPrice);				//整个父订单的总金额
-		//插入父订单 并返回ID
-		orderMapper.insert(parentOrder);
+		
 		
 System.out.println("------------"+parentOrder.getID());
 		
-		//逐个设置子订单 并设置子订单
+		/*//逐个设置子订单 并设置子订单
 		for(int i=0;i<childOrders.size();i++){
 			childOrders.get(i).setParentID(parentOrder.getID());
 			childOrders.get(i).setParentCode(parentOrder.getOrderCode());
-			orderMapper.insert(childOrders.get(i));
-		}
+			orderMapper.insertSelective(childOrders.get(i));
+		}*/
 		
 		//以下for循环 基于  同一供应商同一货仓 此时一个子订单可以对应多个 订单商品
 		for(Entry<String,List<OrderProduct>> entry:supplyHouseMap.entrySet()){
@@ -533,7 +521,6 @@ System.out.println("------------"+parentOrder.getID());
 			List<OrderProduct> orderProducts = entry.getValue();
 			
 			Order childOrder = new Order();
-			childOrder.setParentID(parentOrder.getID());
 			childOrder.setParentCode(parentOrder.getOrderCode());
 			
 			//设置订单的各项状态   由于同一个供应商 的同一个货仓 可能有 多个订单商品  所以 有些状态无法设置
@@ -548,11 +535,11 @@ System.out.println("------------"+parentOrder.getID());
 			childOrder.setOrderCode(sdf.format(new Date())+(int)(Math.random()*10)+(int)(Math.random()*10)+(int)(Math.random()*10));
 			
 			//子订单 也要 设置收货地址
-			childOrder.setCountry("");
-			childOrder.setProvince("");
-			childOrder.setCity("");
-			childOrder.setDistrict("");
-			childOrder.setAddress("");
+			childOrder.setCountry(parentOrder.getCountry());
+			childOrder.setProvince(parentOrder.getProvince());
+			childOrder.setCity(parentOrder.getCity());
+			childOrder.setDistrict(parentOrder.getDistrict());
+			childOrder.setAddress(parentOrder.getAddress());
 			
 			//设置创建时间
 			childOrder.setCreateTime(new Date());
@@ -563,34 +550,105 @@ System.out.println("------------"+parentOrder.getID());
 			//设置下单用户的ID
 			childOrder.setMqID(mqID);
 			
-			childOrder.setRecName("");
-			childOrder.setRecMobile("");
+			childOrder.setRecName(parentOrder.getRecName());
+			childOrder.setRecMobile(parentOrder.getRecMobile());
 
 			Long childOrderPostFee = 0L;
 			Long childOrderSum = 0L;			//子订单金额
 			//将子订单对应的订单商品 合并处理 设置  运费,子订单金额
+			ReceiveAddress receiveAddress = manageReceAddService.getDefaultAddress(mqID, requestID);
 			for(int i=0;i<orderProducts.size();i++){
 				OrderProduct orderProduct = orderProducts.get(i);
-				
-				childOrderSum += skuPriceMap.get(orderProduct.getSkuID())*orderProduct.getBuyNum();
-				
+				childOrderSum += skuPrices[i]*orderProduct.getBuyNum();
+				if(receiveAddress!=null){
+					childOrderPostFee += postFeeService.calcPostFee(orderProduct.getProductID(), orderProduct.getBuyNum(), receiveAddress.getCountryID(), receiveAddress.getProvinceID(), receiveAddress.getCountryID(), receiveAddress.getDistrictID(), UUID.randomUUID().toString());
+				}
 			}
+			childOrder.setOrderSum(childOrderSum);
 			
-//			childOrder.setPostFee(32L);  子订单的运费处理有问题
+			childOrder.setPostFee(childOrderPostFee);  //子订单的运费处理有问题
 //			childOrder.setPlatform("");
 			
-			//假设子订单处理好了
-			orderMapper.insert(childOrder);
-
-			for(int i=0;i<orderProducts.size();i++){
-				orderProducts.get(i).setOrderID(childOrder.getID());
-				orderProductMapper.insert(orderProducts.get(i));
-			}
+			childOrders.add(childOrder);
 			
+			orderCodeOrderProductsMap.put(childOrder.getOrderCode(), orderProducts);
+
+			parentOrderPostFee+=childOrderPostFee;
 			
 		}
 		
-		return 1;
+		//插入父订单 并返回ID
+		parentOrder.setpFee(parentOrderPostFee);
+		System.out.println("parentOrder.getRecName()------"+parentOrder.getRecName());
+		orderMapper.insertSelective(parentOrder);
+		
+		for(int i=0;i<childOrders.size();i++){
+			Order childOrder = childOrders.get(i);
+			childOrder.setParentID(parentOrder.getID());
+			orderMapper.insertSelective(childOrder);
+			List<OrderProduct> orderProducts = orderCodeOrderProductsMap.get(childOrder.getOrderCode());
+			for(int j=0;j<orderProducts.size();j++){
+				orderProducts.get(j).setOrderID(childOrder.getID());
+				orderProductMapper.insertSelective(orderProducts.get(j));
+			}
+		}
+		
+		return parentOrder.getID();
 	}
+
+	@Override
+	public Order setReceAdd(String mqID, Order order, String requestID) {
+		
+		if(order==null){
+			return null;
+		}
+		
+		//设置收货地址
+		ReceiveAddress receiveAddress = manageReceAddService.getDefaultAddress(mqID, requestID);
+		if(receiveAddress!=null){
+			order.setRecName(receiveAddress.getRecName());
+			order.setRecMobile(receiveAddress.getRecMobile());
+			order.setAddress(receiveAddress.getAddress());
+			
+			Address country  = null;
+			Address province = null;
+			Address city 	 = null;
+			Address district = null;
+			
+			if(receiveAddress.getCountryID()!=null){
+				country = addressService.getAddress(receiveAddress.getCountryID(),UUID.randomUUID().toString());
+			}
+			if(receiveAddress.getProvinceID()!=null){
+				province = addressService.getAddress(receiveAddress.getProvinceID(),UUID.randomUUID().toString());
+			}
+			if(receiveAddress.getCityID()!=null){
+				city = addressService.getAddress(receiveAddress.getCityID(),UUID.randomUUID().toString());
+			}
+			if(receiveAddress.getDistrictID()!=null){
+				district = addressService.getAddress(receiveAddress.getDistrictID(),UUID.randomUUID().toString());
+			}
+			
+			if(country!=null){
+				order.setCountry(country.getName());
+			}
+			if(province!=null){
+				order.setProvince(province.getName());
+			}
+			if(city!=null){
+				order.setCity(city.getName());
+			}
+			if(district!=null){
+				order.setDistrict(district.getName());
+			}
+		}else{
+			order.setCountry(null);
+			order.setProvince(null);
+			order.setCity(null);
+			order.setDistrict(null);
+		}
+		
+		return order;
+	}
+	
 	
 }
