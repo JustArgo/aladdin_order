@@ -1,5 +1,6 @@
 package com.maiquan.aladdin_order.service.impl;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,10 +8,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.UUID;
+
+import me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage;
+import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.api.WxMpServiceImpl;
+import me.chanjar.weixin.mp.bean.result.WxMpPrepayIdResult;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.aladdin.interaction.wx.service.WxInteractionService;
+import com.alibaba.dubbo.common.json.JSON;
 import com.maiquan.aladdin_order.domain.Order;
 import com.maiquan.aladdin_order.domain.OrderProduct;
 import com.maiquan.aladdin_order.mapper.OrderMapper;
@@ -55,6 +64,9 @@ public class OrderServiceImpl implements IOrderService{
 	@Autowired
 	private IPostFeeService postFeeService;
 	
+	@Autowired
+	private WxInteractionService wxInteractionService;
+	
 	@Override
 	public Order getOrderByID(Integer orderID, String requestID) {
 		
@@ -85,7 +97,7 @@ public class OrderServiceImpl implements IOrderService{
 
 
 	@Override
-	public int placeOrder(String mqID, Integer[] skuIDs, Integer[] buyNums, Long[] skuPrices, String requestID) {
+	public int placeOrder(String mqID, Integer[] skuIDs, Integer[] buyNums, Long[] skuPrices, Long pFee, Long pSum, String invoiceName, String notes, String requestID) {
 		
 		LogUtil.logInput("订单微服务", "placeOrder", requestID, mqID, skuIDs, buyNums, skuPrices);
 		
@@ -94,7 +106,7 @@ public class OrderServiceImpl implements IOrderService{
 			return 1;
 		}
 		
-		int parentOrderID = dealWithOrder2(mqID, skuIDs, buyNums, skuPrices, requestID);
+		int parentOrderID = dealWithOrder2(mqID, skuIDs, buyNums, skuPrices, pFee, pSum, invoiceName, notes, requestID);
 		
 		LogUtil.logOutput("订单微服务", "placeOrder", requestID, parentOrderID);
 		
@@ -433,12 +445,11 @@ System.out.println(product.getSupplyID());
 		return parentOrder.getID();
 	}
 	
-	public int dealWithOrder2(String mqID, Integer[] skuIDs, Integer[] buyNums, Long[] skuPrices, String requestID){
+	public int dealWithOrder2(String mqID, Integer[] skuIDs, Integer[] buyNums, Long[] skuPrices, Long pFee, Long pSum, String invoiceName, String notes, String requestID){
 		
 		Order parentOrder = new Order();
 		List<Order> childOrders = new ArrayList<Order>();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmddSSS");
-		Long parentOrderPostFee = 0L;
 		//用于存放 相同供应商相同仓库的 订单商品对象
 		Map<String,List<OrderProduct>> supplyHouseMap = new HashMap<String,List<OrderProduct>>(); 
 		Map<String,List<OrderProduct>> orderCodeOrderProductsMap = new HashMap<String,List<OrderProduct>>();
@@ -456,31 +467,34 @@ System.out.println(product.getSupplyID());
 		parentOrder.setShippingStatus("NOT");		//物流状态
 		//parentOrder.setPlatform("");
 		parentOrder.setMqID(mqID);					//下单用户ID
+		parentOrder.setInvoiceName(invoiceName);
 		//parentOrder.setInvoiceName("");			//发票抬头
 		
 		//设置收货地址
 		parentOrder = this.setReceAdd(mqID, parentOrder, requestID);
 		parentOrder.setCreateTime(new Date());
+		parentOrder.setpFee(pFee);
+		parentOrder.setpSum(pSum);
+		parentOrder.setNotes(notes);
 		
-		//总订单金额 
-		Long totalPrice = 0L;
+		//插入父订单 并返回ID
+		orderMapper.insertSelective(parentOrder);
+		
 		
 		//处理子订单  关于运费  不同的sku有不同的计算过程
 		for(int i=0;i<skuIDs.length;i++){
 			
-			//订单总金额
-			totalPrice += skuPrices[i]*buyNums[i];
-			
 			//设置skuID和skuPrice的对应关系 供下面使用
-			skuPriceMap.put(skuIDs[i],skuPrices[i]);
+			skuPriceMap.put(skuIDs[i],skuPrices[i]*100);
 			
 			//找出sku 及其对应的商品 以及供应商
 			ProductSku sku = productSkuService.getSkuByID(skuIDs[i],UUID.randomUUID().toString());
 			Product product = productService.queryProduct(sku.getProductID(),UUID.randomUUID().toString());
 			Supplier supplier = supplierService.getSupplier(product.getSupplyID(),UUID.randomUUID().toString());
+			Map<String,Object> productFreightMap = postFeeService.getProductFeight(product.getID(), UUID.randomUUID().toString());
 System.out.println(product.getSupplyID());
 			OrderProduct orderProduct = new OrderProduct();
-			orderProduct.setID((int)(Math.random()*2147483648L));
+			//orderProduct.setID((int)(Math.random()*2147483648L));
 			orderProduct.setProductID(product.getID());
 			orderProduct.setProductName(product.getProductName());
 			orderProduct.setSkuID(skuIDs[i]);
@@ -503,7 +517,6 @@ System.out.println(product.getSupplyID());
 			
 		}
 		
-		parentOrder.setpSum(totalPrice);				//整个父订单的总金额
 		
 		
 System.out.println("------------"+parentOrder.getID());
@@ -530,6 +543,8 @@ System.out.println("------------"+parentOrder.getID());
 			childOrder.setReturnGoodsStatus("NOT");		//退货状态
 			childOrder.setCommentStatus("NOT");			//评论状态
 			childOrder.setShippingStatus("NOT");		//物流状态
+			childOrder.setNotes(notes);					//备注
+			childOrder.setInvoiceName(invoiceName);		//发票抬头
 			
 			//设置订单号
 			childOrder.setOrderCode(sdf.format(new Date())+(int)(Math.random()*10)+(int)(Math.random()*10)+(int)(Math.random()*10));
@@ -544,9 +559,6 @@ System.out.println("------------"+parentOrder.getID());
 			//设置创建时间
 			childOrder.setCreateTime(new Date());
 			
-			//设置发票抬头
-//			childOrder.setInvoiceName("");
-			
 			//设置下单用户的ID
 			childOrder.setMqID(mqID);
 			
@@ -559,7 +571,7 @@ System.out.println("------------"+parentOrder.getID());
 			ReceiveAddress receiveAddress = manageReceAddService.getDefaultAddress(mqID, requestID);
 			for(int i=0;i<orderProducts.size();i++){
 				OrderProduct orderProduct = orderProducts.get(i);
-				childOrderSum += skuPrices[i]*orderProduct.getBuyNum();
+				childOrderSum += skuPriceMap.get(orderProduct.getSkuID())*orderProduct.getBuyNum();
 				if(receiveAddress!=null){
 					childOrderPostFee += postFeeService.calcPostFee(orderProduct.getProductID(), orderProduct.getBuyNum(), receiveAddress.getCountryID(), receiveAddress.getProvinceID(), receiveAddress.getCountryID(), receiveAddress.getDistrictID(), UUID.randomUUID().toString());
 				}
@@ -573,14 +585,10 @@ System.out.println("------------"+parentOrder.getID());
 			
 			orderCodeOrderProductsMap.put(childOrder.getOrderCode(), orderProducts);
 
-			parentOrderPostFee+=childOrderPostFee;
 			
 		}
 		
-		//插入父订单 并返回ID
-		parentOrder.setpFee(parentOrderPostFee);
-		System.out.println("parentOrder.getRecName()------"+parentOrder.getRecName());
-		orderMapper.insertSelective(parentOrder);
+		
 		
 		for(int i=0;i<childOrders.size();i++){
 			Order childOrder = childOrders.get(i);
@@ -649,6 +657,5 @@ System.out.println("------------"+parentOrder.getID());
 		
 		return order;
 	}
-	
-	
+
 }

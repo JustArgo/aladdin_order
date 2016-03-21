@@ -21,6 +21,10 @@ public class OrderProduct implements Serializable{
     private Integer buyNum;
 
     private String skuName;
+    
+    private Integer freightTplID;
+    
+    private String freightType;
 
     public Integer getID() {
         return ID;
@@ -86,11 +90,29 @@ public class OrderProduct implements Serializable{
         this.skuName = skuName == null ? null : skuName.trim();
     }
 
+	public Integer getFreightTplID() {
+		return freightTplID;
+	}
+
+	public void setFreightTplID(Integer freightTplID) {
+		this.freightTplID = freightTplID;
+	}
+
+	public String getFreightType() {
+		return freightType;
+	}
+
+	public void setFreightType(String freightType) {
+		this.freightType = freightType;
+	}
+
 	@Override
 	public String toString() {
 		return "OrderProduct [ID=" + ID + ", orderID=" + orderID
 				+ ", productID=" + productID + ", productName=" + productName
 				+ ", supName=" + supName + ", skuID=" + skuID + ", buyNum="
-				+ buyNum + ", skuName=" + skuName + "]";
+				+ buyNum + ", skuName=" + skuName + ", freightTplID="
+				+ freightTplID + ", freightType=" + freightType + "]";
 	}
+
 }

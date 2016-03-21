@@ -31,12 +31,13 @@
     <result column="confirmTime" property="confirmTime" jdbcType="TIMESTAMP" />
     <result column="payTime" property="payTime" jdbcType="TIMESTAMP" />
     <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="notes" property="notes" jdbcType="VARCHAR"/>
   </resultMap>
   <sql id="Base_Column_List" >
     ID, parentID, parentCode, orderCode, orderStatus, payStatus, logisticsNum, returnMoneyStatus, 
     returnGoodsStatus, commentStatus, shippingStatus, platform, mqID, invoiceName, country, 
     province, city, district, address, recName, recMobile, pFee, postFee, pSum, orderSum, 
-    paySum, confirmTime, payTime, createTime
+    paySum, confirmTime, payTime, createTime, notes
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -58,7 +59,7 @@
       address, recName, recMobile, 
       pFee, postFee, pSum, orderSum, 
       paySum, confirmTime, payTime, 
-      createTime)
+      createTime, notes)
     values (#{ID,jdbcType=INTEGER}, #{parentID,jdbcType=INTEGER}, #{parentCode,jdbcType=VARCHAR}, 
       #{orderCode,jdbcType=VARCHAR}, #{orderStatus,jdbcType=VARCHAR}, #{payStatus,jdbcType=VARCHAR}, 
       #{logisticsNum,jdbcType=VARCHAR}, #{returnMoneyStatus,jdbcType=VARCHAR}, #{returnGoodsStatus,jdbcType=VARCHAR}, 
@@ -68,7 +69,7 @@
       #{address,jdbcType=VARCHAR}, #{recName,jdbcType=VARCHAR}, #{recMobile,jdbcType=VARCHAR}, 
       #{pFee,jdbcType=BIGINT}, #{postFee,jdbcType=BIGINT}, #{pSum,jdbcType=BIGINT}, #{orderSum,jdbcType=BIGINT}, 
       #{paySum,jdbcType=BIGINT}, #{confirmTime,jdbcType=TIMESTAMP}, #{payTime,jdbcType=TIMESTAMP}, 
-      #{createTime,jdbcType=TIMESTAMP})
+      #{createTime,jdbcType=TIMESTAMP},#{notes,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.maiquan.aladdin_order.domain.Order" useGeneratedKeys="true" keyProperty="ID" >
     insert into t_order
@@ -160,6 +161,9 @@
       <if test="createTime != null" >
         createTime,
       </if>
+      <if test="notes != null" >
+        notes,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="ID != null" >
@@ -248,6 +252,9 @@
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="notes != null" >
+        #{notes,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -338,6 +345,9 @@
       <if test="createTime != null" >
         createTime = #{createTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="notes != null">
+      	notes = #{notes,jdbcType=VARCHAR},
+      </if>
     </set>
     where ID = #{ID,jdbcType=INTEGER}
   </update>
@@ -370,7 +380,8 @@
       paySum = #{paySum,jdbcType=BIGINT},
       confirmTime = #{confirmTime,jdbcType=TIMESTAMP},
       payTime = #{payTime,jdbcType=TIMESTAMP},
-      createTime = #{createTime,jdbcType=TIMESTAMP}
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      notes = #{notes,jdbcType=VARCHAR}
     where ID = #{ID,jdbcType=INTEGER}
   </update>
   <select id="selectByCondition" parameterType="Order" resultMap="BaseResultMap">
@@ -461,6 +472,9 @@
       </if>
       <if test="createTime != null" >
         AND createTime = #{createTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="notes != null">
+      	AND notes = #{notes,jdbcType=VARCHAR}
       </if>
   	</where>	
   </select>

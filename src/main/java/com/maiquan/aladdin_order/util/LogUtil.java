@@ -21,7 +21,7 @@ public class LogUtil {
 		
 		if(logger.isInfoEnabled()){
 			try {
-				logger.info("本机ip:"+InetAddress.getLocalHost().getHostAddress()+" 创建时间:"+new Date().toLocaleString()+" 服务名称:"+serviceName+" 方法名:"+methodName+" 输入参数: "+paramStr);
+				logger.info("本机ip:"+InetAddress.getLocalHost().getHostAddress()+" 创建时间:"+new Date().toLocaleString()+" 服务名称:"+serviceName+" 方法名:"+methodName+" 请求ID: "+ requestID +" 输入参数: "+paramStr);
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			}
@@ -38,7 +38,7 @@ public class LogUtil {
 		
 		if(logger.isInfoEnabled()){
 			try {
-				logger.info("本机ip:"+InetAddress.getLocalHost().getHostAddress()+" 创建时间:"+new Date().toLocaleString()+" 服务名称:"+serviceName+" 方法名:"+methodName+" 输出参数: "+paramStr);
+				logger.info("本机ip:"+InetAddress.getLocalHost().getHostAddress()+" 创建时间:"+new Date().toLocaleString()+" 服务名称:"+serviceName+" 方法名:"+methodName+" 请求ID: "+ requestID +" 输出参数: "+paramStr);
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			}

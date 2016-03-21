@@ -49,7 +49,7 @@ public class TestOrderService {
 		order.setRecMobile("13456989856");
 		order.setRecName("jiangdong");
 		
-		orderService.placeOrder("mqsdfwerewr234234",new Integer[]{1,2,3},new Integer[]{1,1,1},new Long[]{115L,220L,30000L}, UUID.randomUUID().toString());
+		//orderService.placeOrder("mqsdfwerewr234234",new Integer[]{1,2,3},new Integer[]{1,1,1},new Long[]{115L,220L,30000L}, UUID.randomUUID().toString());
 		
 		Order retOrder = orderService.getOrderByID(order.getID(), UUID.randomUUID().toString());
 		Assert.assertNotNull(retOrder);

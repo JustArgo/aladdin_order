@@ -10,9 +10,11 @@
     <result column="skuID" property="skuID" jdbcType="INTEGER" />
     <result column="buyNum" property="buyNum" jdbcType="INTEGER" />
     <result column="skuName" property="skuName" jdbcType="VARCHAR" />
+    <result column="freightTplID" property="freightTplID" jdbcType="INTEGER"/>
+    <result column="freightType"  property="freightType" jdbcType="VARCHAR"/>
   </resultMap>
   <sql id="Base_Column_List" >
-    ID, orderID, productID, productName, supName, skuID, buyNum, skuName
+    ID, orderID, productID, productName, supName, skuID, buyNum, skuName, freightTplID, freightType
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -27,10 +29,10 @@
   <insert id="insert" parameterType="com.maiquan.aladdin_order.domain.OrderProduct" >
     insert into t_order_product (ID, orderID, productID, 
       productName, supName, skuID, buyNum,
-      skuName)
+      skuName,freightTplID,freightType)
     values (#{ID,jdbcType=INTEGER}, #{orderID,jdbcType=INTEGER}, #{productID,jdbcType=INTEGER}, 
       #{productName,jdbcType=VARCHAR}, #{supName,jdbcType=VARCHAR}, #{skuID,jdbcType=INTEGER}, #{buyNum,jdbcType=INTEGER},
-      #{skuName,jdbcType=VARCHAR})
+      #{skuName,jdbcType=VARCHAR},#{freightTplID,jdbcType=INTEGER},#{freightType,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.maiquan.aladdin_order.domain.OrderProduct" >
     insert into t_order_product
@@ -59,6 +61,12 @@
       <if test="skuName != null" >
         skuName,
       </if>
+      <if test="freightTplID != null">
+      	freightTplID,
+      </if>
+      <if test="freightType != null">
+      	freightType,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="ID != null" >
@@ -84,6 +92,12 @@
       </if>
       <if test="skuName != null" >
         #{skuName,jdbcType=VARCHAR},
+      </if>
+      <if test="freightTplID != null">
+      	#{freightTplID,jdbcType=INTEGER},
+      </if>
+      <if test="freightType != null">
+      	#{freightType,jdbcType=VARCHAR}
       </if>
     </trim>
   </insert>
@@ -111,6 +125,12 @@
       <if test="skuName != null" >
         skuName = #{skuName,jdbcType=VARCHAR},
       </if>
+      <if test="freightTplID != null">
+      	freightTplID = #{freightTplID,jdbcType=INTEGER},
+      </if>
+      <if test="freightType != null">
+      	freightType = #{freightType,jdbcType=VARCHAR},
+      </if>
     </set>
     where ID = #{ID,jdbcType=INTEGER}
   </update>
@@ -122,7 +142,9 @@
       supName = #{supName,jdbcType=VARCHAR},
       skuID = #{skuID,jdbcType=INTEGER},
       buyNum = #{buyNum,jdbcTpye=INTEGER},
-      skuName = #{skuName,jdbcType=VARCHAR}
+      skuName = #{skuName,jdbcType=VARCHAR},
+      freightTplID = #{freightTplID,jdbcType=INTEGER},
+      freightType = #{freightType,jdbcType=VARCHAR}
     where ID = #{ID,jdbcType=INTEGER}
   </update>
   <select id="selectByCondition" parameterType="com.maiquan.aladdin_order.domain.OrderProduct" resultMap="BaseResultMap">
@@ -150,6 +172,12 @@
       </if>
       <if test="skuName != null" >
         AND skuName = #{skuName,jdbcType=VARCHAR}
+      </if>
+      <if test="freightTplID != null">
+      	AND freightTplID = #{freightTplID,jdbcType=INTEGER}
+      </if>
+      <if test="freightType != null">
+      	AND freightType = #{freightType,jdbcType=VARCHAR}
       </if>
 	</where>  
   </select>

@@ -36,4 +36,7 @@
 	<!-- 引用邮费计算服务 -->
 	<dubbo:reference id="postFeeService" interface="com.maiquan.aladdin_product.service.IPostFeeService"/>
 	
+	<!-- wx交互 -->
+	<dubbo:reference id="wxInteractionService" interface="com.aladdin.interaction.wx.service.WxInteractionService"/>
+	
 </beans>

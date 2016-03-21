@@ -19,7 +19,7 @@ public interface IOrderService {
 	/**
 	 * 新增订单
 	 */
-	int placeOrder(String mqID, Integer[] skuIDs, Integer[] buyNums, Long[] skuPrices, String requestID);
+	int placeOrder(String mqID, Integer[] skuIDs, Integer[] buyNums, Long[] skuPrices, Long pFee, Long pSum, String invoiceName, String notes, String requestID);
 	
 	/**
 	 * 删除订单 
@@ -85,4 +85,5 @@ public interface IOrderService {
 	 * 为某个订单设置收货地址
 	 */
 	Order setReceAdd(String mqID, Order order, String requestID);
+	
 }

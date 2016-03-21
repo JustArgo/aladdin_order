@@ -27,42 +27,10 @@
 		<!-- 引用收货地址微服务 -->
 		<dependency>
 			<groupId>com.maiquan</groupId>
-			<artifactId>aladdin_receadd</artifactId>
+			<artifactId>aladdin_base</artifactId>
 			<version>0.2.0-SNAPSHOT</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId> 
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 	
-		<!-- 引用商品微服务 -->
-		<dependency>
-			<groupId>com.maiquan</groupId>
-			<artifactId>aladdin_product</artifactId>
-			<version>0.2.0-SNAPSHOT</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		
-		<!-- 引用供应商微服务 -->
-		<dependency>
-			<groupId>com.maiquan</groupId>
-			<artifactId>aladdin_supplier</artifactId>
-			<version>0.2.0-SNAPSHOT</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
 		<!-- druid -->
 		<dependency>
 			<groupId>com.alibaba</groupId>
@@ -285,6 +253,54 @@
 			<artifactId>resteasy-jaxb-provider</artifactId>
 			<version>3.0.7.Final</version>
 		</dependency>
+<!-- http -->
+
+		<dependency>
+
+			<groupId>org.apache.httpcomponents</groupId>
+
+			<artifactId>httpcore</artifactId>
+
+			<version>4.4.1</version>
+
+		</dependency>
+
+		<dependency>
+
+			<groupId>org.apache.httpcomponents</groupId>
+
+			<artifactId>httpclient</artifactId>
+
+			<version>4.5</version>
+
+		</dependency>
+
+		<dependency>
+
+			<groupId>org.apache.httpcomponents</groupId>
+
+			<artifactId>httpmime</artifactId>
+
+			<version>4.5</version>
+
+		</dependency>
+
+
+
+
+
+		<!-- sha1加密工具 -->
+
+		<dependency>
+
+			<groupId>commons-codec</groupId>
+
+			<artifactId>commons-codec</artifactId>
+
+			<version>1.10</version>
+
+		</dependency>
+
 
 	</dependencies>
 
