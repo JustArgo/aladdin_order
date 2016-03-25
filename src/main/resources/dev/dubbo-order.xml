@@ -19,24 +19,24 @@
 	<bean id="orderProductService" class="com.maiquan.aladdin_order.service.impl.OrderProductServiceImpl"/>
 	
 	<!-- 应用收货地址微服务 -->
-	<dubbo:reference id="manageReceAddService" interface="com.maiquan.aladdin_receadd.service.IManageReceAddService"/>
+	<dubbo:reference id="manageReceAddService" interface="com.maiquan.aladdin_receadd.service.IManageReceAddService" check="false"/>
 	
 	<!-- 引用地区查询微服务 -->
-	<dubbo:reference id="addressService" interface="com.maiquan.aladdin_receadd.service.IAddressService"/>
+	<dubbo:reference id="addressService" interface="com.maiquan.aladdin_receadd.service.IAddressService" check="false"/>
 	
 	<!-- 引用商品微服务 -->
-	<dubbo:reference id="productService" interface="com.maiquan.aladdin_product.service.IProductService"/>
+	<dubbo:reference id="productService" interface="com.maiquan.aladdin_product.service.IProductService" check="false"/>
 	
 	<!-- 引用商品Sku微服务 -->
-	<dubbo:reference id="productSkuService" interface="com.maiquan.aladdin_product.service.IProductSkuService"/>
+	<dubbo:reference id="productSkuService" interface="com.maiquan.aladdin_product.service.IProductSkuService" check="false"/>
 	
 	<!-- 引用供应商微服务 -->
-	<dubbo:reference id="supplierService" interface="com.maiquan.aladdin_supplier.service.ISupplierService"/>
+	<dubbo:reference id="supplierService" interface="com.maiquan.aladdin_supplier.service.ISupplierService" check="false"/>
 	
 	<!-- 引用邮费计算服务 -->
-	<dubbo:reference id="postFeeService" interface="com.maiquan.aladdin_product.service.IPostFeeService"/>
+	<dubbo:reference id="postFeeService" interface="com.maiquan.aladdin_product.service.IPostFeeService" check="false"/>
 	
 	<!-- wx交互 -->
-	<dubbo:reference id="wxInteractionService" interface="com.aladdin.interaction.wx.service.WxInteractionService"/>
+	<dubbo:reference id="wxInteractionService" interface="com.aladdin.interaction.wx.service.WxInteractionService" check="false"/>
 	
 </beans>

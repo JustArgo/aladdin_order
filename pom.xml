@@ -334,6 +334,38 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
+             <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>install</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>
+								${project.build.directory}/lib
+							</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin> 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>com.maiquan.aladdin_order.Start</mainClass>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			
 			<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -363,7 +395,7 @@
   			<config.dir>dev</config.dir>
   		</properties>
   		<activation>
-  			<activeByDefault>true</activeByDefault>
+  			<activeByDefault>false</activeByDefault>
   		</activation>
   	</profile>
   	<profile>
@@ -372,7 +404,7 @@
   			<config.dir>pro</config.dir>
   		</properties>
   		<activation>
-  			<activeByDefault>false</activeByDefault>
+  			<activeByDefault>true</activeByDefault>
   		</activation>
   	</profile>
   </profiles>
